@@ -1,0 +1,86 @@
+#!/bin/sh
+PACKAGED_NAME="$1"
+OPTIONS="$2"
+
+function help(){
+    echo "使用方法: runjar xxx.jar [start|stop|status|restart|help]"
+    echo "start:启动程序,需要指定完整的文件路径"
+    echo "stop:关闭程序,需要提供程序名字"
+    echo "status:查看程序运行状态,需要提供程序名字"
+    echo "restart:重启程序,需要指定完整的文件路径"
+    echo "help:打印帮助信息"
+}
+
+#如果任何语句的执行结果不是true则应该退出
+set -e
+
+if [[ -z "$PACKAGED_NAME" || -z "$OPTIONS" ]]; then
+  help
+  exit 0
+fi
+
+function start(){
+  if [[ ! -f "$PACKAGED_NAME" ]]; then
+    echo "the file $PACKAGED_NAME is not exist!"
+    # 退出脚本
+    exit 0
+  else
+    echo "starting start ..."
+    nohup java -Xms1024m -Xmx1024m -jar $PACKAGED_NAME >/dev/null 2>&1 &
+    echo "starting success ..."
+  fi
+}
+
+function stop(){
+  PID=`ps -ef | grep $PACKAGED_NAME | grep -v grep | awk '{print $2}'`
+  if [ -z "$PID" ];then
+    echo "Application is already stopped"
+  else
+    echo "stopping start ..."
+    echo "kill $PID"
+    kill -9 $PID
+    echo "stopping success ..."
+  fi
+}
+
+function restart()
+{
+        stop
+        sleep 3
+        start
+}
+
+function status()
+{
+    pid=$(ps -ef | grep $PACKAGED_NAME | grep -v grep | awk '{printf $2 " "}')
+    #echo "$pid"
+    if [ "$pid" != "" ]
+    then
+        echo "Application is running,pid is $pid"
+    else
+        echo "Application is stopped"
+    fi
+}
+
+
+
+case $OPTIONS in
+  'start')
+    start
+    ;;
+  'stop')
+    stop
+    ;;
+  'status')
+    status
+    ;;
+  'restart')
+    restart
+    ;;
+  'help')
+    help
+    ;;
+  *)
+
+esac
+exit 0

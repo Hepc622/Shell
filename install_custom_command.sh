@@ -74,7 +74,7 @@ if [[ "$#" -gt 0 ]]; then
         $index=$index+1
     done
 else
-    $scprits=("runjar","rpm_rempve")
+    $scprits=("runjar" "rpm_rempve")
 fi
 
 # 循环获取脚本生成命令

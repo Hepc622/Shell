@@ -82,6 +82,11 @@ echo "install custom command ${scprits[@]}"
 
 # 循环获取脚本生成命令
 for item in ${scprits[@]}; do
+    # 判断文件是否存在，如果存在就备份一下
+    if [[ -f "${script_path}/${item}" ]]; then
+        today=`date +%Y%m%d`
+        mv "${scprit_path}/${item}" "${scprit_path}/${item}.${today}.bak"
+    fi
     # 下载脚本
     wget "https://raw.githubusercontent.com/Hepc622/Shell/master/${item}"
     # 更改权限
@@ -97,8 +102,12 @@ for item in ${scprits[@]}; do
     command="alias ${item}='${lns}'"
 
     echo "command is ${item}"
-    # 写入文件中去
-    echo ${command} >> ${script_bin}
+    if [[ `cat ${script_bin}|grep ${command}` ]]; then
+        echo "The command already exsit"
+    else
+        # 写入文件中去
+        echo ${command} >> ${script_bin}
+    fi
 done
 # 这里需要只配置文件生效一下
 source ${script_bin}

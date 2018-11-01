@@ -54,7 +54,7 @@ script_path="/usr/local/sh"
 script_bin="/etc/profile.d/custom-aliases.sh"
 
 # 判断脚本是否存在,存在就创建
-if [[ ! -f ${scrpt_bin} ]]; then
+if [[ ! -f ${script_bin} ]]; then
     touch ${script_bin}
 fi
 
@@ -63,64 +63,61 @@ if [[ ! -d ${script_path} ]]; then
     mkdir ${script_path}
 fi
 
-scprits=""
+scripts=""
 # 切入到目录
 cd ${script_path}
-echo "cd to ${scprit_path}"
+echo "cd to ${script_path}"
 # 判断是会否传了参数
 if [[ "${#}" -gt 0 ]]; then
     index=0
     for i in "${@}"; do
-        scprits[${index}]=${i}
+        scripts[${index}]=${i}
         index=${index}+1
     done
 else
-    scprits=("runjar" "rpm_remove")
+    scripts=("runjar" "rpm_remove")
 fi
 
-echo "install custom command ${scprits[@]}"
+echo "install custom command ${scripts[@]}"
 
 # 循环获取脚本生成命令
-for item in ${scprits[@]}; do
+for item in ${scripts[@]}; do
     flag=0;
     # 判断文件是否存在，如果存在就备份一下
     if [[ -f "${script_path}/${item}" ]]; then
         flag=1
-    fi
-    # 文件存在
-    if [[ flag==1 ]]; then
+        # 文件存在就备份一下
         today=`date +%Y%m%d`
         mv "${script_path}/${item}" "${script_path}/${item}.${today}.bak"
-
     fi
     # 下载脚本
     wget "https://raw.githubusercontent.com/Hepc622/Shell/master/${item}"
     # 更改权限
     chmod 777 $item 
 
-    # 只有文件不存在的时候才建立软连接
-    if [[ flag==0 ]]; then
+    # 如果文件存在就不用去动他了
+    if [[ flag!=1 ]]; then
         # 软连接存放处
         lns="/usr/bin/$item"
         # 建立软连接到/usr/bin/下面
         ln -s ${script_path}"/${item}" "/usr/bin/${item}"
 
         echo "create a soft link /usr/bin/"${item}
-    fi
-    
-    # 组拼自定义命令
-    command="alias ${item}='${lns}'"
+        # 组拼自定义命令
+        command="alias ${item}='${lns}'"
 
-    echo "command is ${item}"
-    # 查看命令是否已经存在
-    exsit=cat ${script_bin} | grep ${command}
-    
-    if [[ ! -z ${exsit} ]]; then
-        echo "The command already exsit"
-    else
-        # 写入文件中去
-        echo ${command} >> ${script_bin}
+        echo "command is ${item}"
+        # 查看命令是否已经存在
+        exsit=cat ${script_bin} | grep "'${command}'"
+        
+        if [[ ! -z ${exsit} ]]; then
+            echo "The command already exsit"
+        else
+            # 写入文件中去
+            echo ${command} >> ${script_bin}
+        fi
     fi
+    
 done
 # 这里需要只配置文件生效一下
 source ${script_bin}

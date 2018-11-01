@@ -66,6 +66,7 @@ fi
 scprits=""
 # 切入到目录
 cd ${script_path}
+echo "cd to ${scprit_path}"
 # 判断是会否传了参数
 if [[ "${#}" -gt 0 ]]; then
     index=0
@@ -77,6 +78,8 @@ else
     scprits=("runjar" "rpm_remove")
 fi
 
+echo "install custom command ${scprits[@]}"
+
 # 循环获取脚本生成命令
 for item in ${scprits[@]}; do
     # 下载脚本
@@ -87,8 +90,13 @@ for item in ${scprits[@]}; do
     lns="/usr/bin/$item"
     # 建立软连接到/usr/bin/下面
     ln -s ${script_path}"/${item}" "/usr/bin/${item}"
+
+    echo "create a soft link /usr/bin/"${item}
+    
     # 组拼自定义命令
-    command="alias=${lns}"
+    command="alias ${item}='${lns}'"
+
+    echo "command is ${item}"
     # 写入文件中去
     echo ${command} >> ${script_bin}
 done

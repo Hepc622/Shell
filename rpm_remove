@@ -1,0 +1,12 @@
+#!/bin/bash
+# 获取脚本的第一个参数
+name=$1
+
+# 先获取所有的相关依赖文件包，在逐个执行move操作
+list=`rpm -qa | grep -i $name`
+
+# 逐个输出
+for item in $list
+do
+   rpm -e –nodeps –force $itme
+done    

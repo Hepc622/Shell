@@ -32,7 +32,10 @@ function start(){
 }
 
 function stop(){
-  PID=`ps -ef | grep $PACKAGED_NAME | grep -v grep | awk '{print $2}'`
+  # 提取文件名 /aa/bb/cc/xxx.jar --> xxx.jar
+  $NAME=${PACKAGED_NAME##*/}
+  # 查出进程id
+  PID=`ps -ef | grep $NAME | grep -v grep | awk '{print $2}'`
   if [ -z "$PID" ];then
     echo "Application is already stopped"
   else
@@ -43,15 +46,16 @@ function stop(){
   fi
 }
 
-function restart()
-{
+function restart(){
         stop
         sleep 3
         start
 }
 
-function status()
-{
+function status(){
+    # 提取文件名 /aa/bb/cc/xxx.jar --> xxx.jar
+    $PACKAGED_NAME=${PACKAGED_NAME##*/}
+    # 获取进程id
     pid=$(ps -ef | grep $PACKAGED_NAME | grep -v grep | awk '{printf $2 " "}')
     #echo "$pid"
     if [ "$pid" != "" ]

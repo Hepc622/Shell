@@ -54,45 +54,45 @@ script_path="/usr/local/sh"
 script_bin="/etc/profile.d/custom-aliases.sh"
 
 # 判断脚本是否存在,存在就创建
-if [[ ! -f "$scrpt_bin" ]]; then
-    touch $script_bin
+if [[ ! -f ${scrpt_bin} ]]; then
+    touch ${script_bin}
 fi
 
 # 如果不是为目录的话就创建一个目录
-if [[ ! -d "$script_path" ]]; then
-    mkdir $script_path
+if [[ ! -d ${script_path} ]]; then
+    mkdir ${script_path}
 fi
 
 scprits=""
 # 切入到目录
-cd $script_path
+cd ${script_path}
 # 判断是会否传了参数
-if [[ "$#" -gt 0 ]]; then
+if [[ "${#}" -gt 0 ]]; then
     index=0
-    for i in "$@"; do
-        scprits[$index]=$i
-        index=$index+1
+    for i in "${@}"; do
+        scprits[${index}]=${i}
+        index=${index}+1
     done
 else
-    scprits=("runjar" "rpm_rempve")
+    scprits=("runjar" "rpm_remove")
 fi
 
 # 循环获取脚本生成命令
 for item in ${scprits[@]}; do
     # 下载脚本
-    wget "https://raw.githubusercontent.com/Hepc622/Shell/master/$item"
+    wget "https://raw.githubusercontent.com/Hepc622/Shell/master/${item}"
     # 更改权限
     chmod 777 $item 
     # 软连接存放处
     lns="/usr/bin/$item"
     # 建立软连接到/usr/bin/下面
-    ln -s $script_path"/$item" "/usr/bin/$item"
+    ln -s ${script_path}"/${item}" "/usr/bin/${item}"
     # 组拼自定义命令
-    command="alias=$lns"
+    command="alias=${lns}"
     # 写入文件中去
-    echo $command >> $script_bin
+    echo ${command} >> ${script_bin}
 done
 # 这里需要只配置文件生效一下
-source /etc/profile.d
+source ${script_bin}
 # 退出脚本
 exit 0

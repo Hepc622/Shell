@@ -82,7 +82,7 @@ echo "install custom command ${scripts[@]}"
 
 # 循环获取脚本生成命令
 for item in ${scripts[@]}; do
-    flag=0;
+    flag=0
     # 判断文件是否存在，如果存在就备份一下
     if [[ -f "${script_path}/${item}" ]]; then
         flag=1
@@ -96,7 +96,7 @@ for item in ${scripts[@]}; do
     chmod 777 $item 
 
     # 如果文件存在就不用去动他了
-    if [[ ${flag}!=1 ]]; then
+    if [[ ${flag} -eq 0 ]]; then
         # 软连接存放处
         lns="/usr/bin/$item"
         # 建立软连接到/usr/bin/下面

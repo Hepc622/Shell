@@ -56,6 +56,7 @@ script_bin="/etc/profile.d/custom-aliases.sh"
 # 判断脚本是否存在,存在就创建
 if [[ ! -f ${script_bin} ]]; then
     touch ${script_bin}
+    chmod 777 ${script_bin}
 fi
 
 # 如果不是为目录的话就创建一个目录

@@ -82,27 +82,40 @@ echo "install custom command ${scprits[@]}"
 
 # 循环获取脚本生成命令
 for item in ${scprits[@]}; do
+    flag=0;
     # 判断文件是否存在，如果存在就备份一下
     if [[ -f "${script_path}/${item}" ]]; then
+        flag=1
+    fi
+    # 文件存在
+    if [[ flag==1 ]]; then
         today=`date +%Y%m%d`
-        mv "${scprit_path}/${item}" "${scprit_path}/${item}.${today}.bak"
+        mv "${script_path}/${item}" "${script_path}/${item}.${today}.bak"
+
     fi
     # 下载脚本
     wget "https://raw.githubusercontent.com/Hepc622/Shell/master/${item}"
     # 更改权限
     chmod 777 $item 
-    # 软连接存放处
-    lns="/usr/bin/$item"
-    # 建立软连接到/usr/bin/下面
-    ln -s ${script_path}"/${item}" "/usr/bin/${item}"
 
-    echo "create a soft link /usr/bin/"${item}
+    # 只有文件不存在的时候才建立软连接
+    if [[ flag==0 ]]; then
+        # 软连接存放处
+        lns="/usr/bin/$item"
+        # 建立软连接到/usr/bin/下面
+        ln -s ${script_path}"/${item}" "/usr/bin/${item}"
+
+        echo "create a soft link /usr/bin/"${item}
+    fi
     
     # 组拼自定义命令
     command="alias ${item}='${lns}'"
 
     echo "command is ${item}"
-    if [[ `cat ${script_bin}|grep ${command}` ]]; then
+    # 查看命令是否已经存在
+    exsit=cat ${script_bin} | grep ${command}
+    
+    if [[ ! -z ${exsit} ]]; then
         echo "The command already exsit"
     else
         # 写入文件中去

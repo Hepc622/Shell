@@ -70,15 +70,15 @@ cd $script_path
 if [[ "$#" -gt 0 ]]; then
     index=0
     for i in "$@"; do
-        $scprits[$index]=$i
-        $index=$index+1
+        scprits[$index]=$i
+        index=$index+1
     done
 else
-    $scprits=("runjar" "rpm_rempve")
+    scprits=("runjar" "rpm_rempve")
 fi
 
 # 循环获取脚本生成命令
-for item in "$scprits"; do
+for item in ${scprits[@]}; do
     # 下载脚本
     wget "https://raw.githubusercontent.com/Hepc622/Shell/master/$item"
     # 更改权限

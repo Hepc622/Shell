@@ -96,7 +96,7 @@ for item in ${scripts[@]}; do
     chmod 777 $item 
 
     # 如果文件存在就不用去动他了
-    if [[ flag!=1 ]]; then
+    if [[ ${flag}!=1 ]]; then
         # 软连接存放处
         lns="/usr/bin/$item"
         # 建立软连接到/usr/bin/下面

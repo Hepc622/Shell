@@ -32,17 +32,16 @@ function start(){
 }
 
 function stop(){
-    # 提取文件名 /aa/bb/cc/xxx.jar --> xxx.jar
-    # 查出进程id
-    PID=`ps -ef | grep ${PACKAGED_NAME##*/} |grep java| grep -v grep | awk '{print $2}'`
-    if [ -z "$PID" ];then
-      echo "Application is already stopped"
-    else
-      echo "stopping start ..."
-      echo "kill $PID"
-      kill -9 $PID
-      echo "stopping success ..."
-    fi
+  # 提取文件名 /aa/bb/cc/xxx.jar --> xxx.jar
+  # 查出进程id
+  PID=`ps -ef | grep ${PACKAGED_NAME##*/} |grep java| grep -v grep | awk '{print $2}'`
+  if [ -z "$PID" ];then
+    echo "Application is already stopped"
+  else
+    echo "stopping start ..."
+    echo "kill $PID"
+    kill -9 $PID
+    echo "stopping success ..."
   fi
 }
 
@@ -62,7 +61,6 @@ function status(){
       echo "Application is running,pid is $pid"
   else
       echo "Application is stopped"
-  fi
 }
 
 

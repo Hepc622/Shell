@@ -34,7 +34,7 @@ function start(){
 function stop(){
   # 提取文件名 /aa/bb/cc/xxx.jar --> xxx.jar
   # 查出进程id
-  PID=`ps -ef | grep ${PACKAGED_NAME##*/} | grep -v grep | awk '{print $2}'`
+  PID=`ps -ef | grep ${PACKAGED_NAME##*/} |grep java| grep -v grep | awk '{print $2}'`
   if [ -z "$PID" ];then
     echo "Application is already stopped"
   else
@@ -54,8 +54,7 @@ function restart(){
 function status(){
   # 提取文件名 ${PACKAGED_NAME##*/} /aa/bb/cc/xxx.jar --> xxx.jar
   # 获取进程id
-  # pid=$(ps -ef | grep ${PACKAGED_NAME##*/} | grep -v grep | awk '{printf $2 " "}')
-  pid=$(ps -ef | grep ${PACKAGED_NAME##*/} | grep -v grep)
+  pid=$(ps -ef | grep ${PACKAGED_NAME##*/} |grep java| grep -v grep| awk '{printf $2 " "}')
   echo "$pid"
   if [ "$pid" != "" ]
   then

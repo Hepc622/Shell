@@ -61,6 +61,7 @@ function status(){
       echo "Application is running,pid is $pid"
   else
       echo "Application is stopped"
+  fi
 }
 
 

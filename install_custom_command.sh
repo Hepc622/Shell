@@ -76,7 +76,7 @@ if [[ "${#}" -gt 0 ]]; then
         index=${index}+1
     done
 else
-    scripts=("runjar" "rpm_remove")
+    scripts=("rjar" "rpmremove")
 fi
 
 echo "install custom command ${scripts[@]}"

@@ -54,8 +54,9 @@ function restart(){
 function status(){
   # 提取文件名 ${PACKAGED_NAME##*/} /aa/bb/cc/xxx.jar --> xxx.jar
   # 获取进程id
-  pid=$(ps -ef | grep ${PACKAGED_NAME##*/} | grep -v grep | awk '{printf $2 " "}')
-  #echo "$pid"
+  # pid=$(ps -ef | grep ${PACKAGED_NAME##*/} | grep -v grep | awk '{printf $2 " "}')
+  pid=$(ps -ef | grep ${PACKAGED_NAME##*/} | grep -v grep)
+  echo "$pid"
   if [ "$pid" != "" ]
   then
       echo "Application is running,pid is $pid"

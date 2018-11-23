@@ -46,7 +46,7 @@ fi
 # Execcut every one script
 for script in ${scripts[@]}; do
     # Try to take the script
-    wget "https://raw.githubusercontent.com/Hepc622/Shell/development/master/${script}"
+    wget "https://raw.githubusercontent.com/Hepc622/Shell/master/development/${script}"
     # Check the script exist
     if [[ -f ${script} ]]; then
         # Try to change the script permission

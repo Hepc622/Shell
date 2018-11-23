@@ -53,7 +53,7 @@ for item in ${scripts[@]}; do
         mv "${script_path}/${item}" "${script_path}/${item}.${today}.bak"
     fi
     # 下载脚本
-    wget "https://raw.githubusercontent.com/Hepc622/Shell/command/master/${item}"
+    wget "https://raw.githubusercontent.com/Hepc622/Shell/master/command/${item}"
     # 更改权限
     chmod 777 $item 
 

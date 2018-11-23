@@ -29,18 +29,22 @@ else
         cat config.yml | while read line
         do
             # Is contains environment
-            if [[ ${line}~='environment' ]]; then
+            if [[ ${line}=~'environment:' ]]; then
+                OLD_IFS=${IFS}
                 # deal 
                 IFS=':' 
                 arr=(${line})
                 IFS=","
                 scripts=(${arr[1]})
+                IFS=${OLD_IFS}
             fi
         done
     else
         echo "get config file faild"
         exit 0
     fi
+    # clear config.yml file
+    rm -f config.yml
 fi
 
 # Execcut every one script

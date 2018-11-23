@@ -23,7 +23,7 @@ if [[ "${#}" -gt 0 ]]; then
         index=${index}+1
     done
 else
-    wget "https://raw.githubusercontent.com/Hepc622/Shell/config/master/config.yml"
+    wget "https://raw.githubusercontent.com/Hepc622/Shell/master/config/config.yml"
     if [[ -f 'config.yml' ]]; then
         # read config file
         cat config.yml | while read line

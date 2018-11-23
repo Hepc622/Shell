@@ -1,4 +1,0 @@
-# The command script
-command: "rjar,rpmremove"
-# The environment script
-environment: "iptables,java,redis,tomcat,mysql,vsftpd,mycat,zookeeper,rabbit"

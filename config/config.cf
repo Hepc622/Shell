@@ -1,0 +1,2 @@
+command="rjar,rpmremove"
+environment="iptables,java,redis,tomcat,mysql,vsftpd,mycat,zookeeper,rabbit"

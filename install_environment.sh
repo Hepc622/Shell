@@ -23,16 +23,16 @@ if [[ "${#}" -gt 0 ]]; then
         index=${index}+1
     done
 else
-    wget "https://raw.githubusercontent.com/Hepc622/Shell/master/config/config.yml"
-    if [[ -f 'config.yml' ]]; then
+    wget "https://raw.githubusercontent.com/Hepc622/Shell/master/config/config.cf"
+    if [[ -f 'config.cf' ]]; then
         # read config file
-        cat config.yml | while read line
+        for line in $(cat config.cf)
         do
             # Is contains environment
-            if [[ ${line}=~'environment:' ]]; then
+            if [[ ${line}=~'environment=' ]]; then
                 OLD_IFS=${IFS}
                 # deal 
-                IFS=':' 
+                IFS='=' 
                 arr=(${line})
                 IFS=","
                 scripts=(${arr[1]})
@@ -43,8 +43,8 @@ else
         echo "get config file faild"
         exit 0
     fi
-    # clear config.yml file
-    rm -f config.yml
+    # clear config.cf file
+    rm -f config.cf
 fi
 
 # Execcut every one script

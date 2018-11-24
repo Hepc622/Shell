@@ -49,6 +49,8 @@ fi
 
 # Execcut every one script
 for script in ${scripts[@]}; do
+    script=${script##\"}
+    script=${script##\"}
     # Try to take the script
     wget "https://raw.githubusercontent.com/Hepc622/Shell/master/development/${script}"
     # Check the script exist

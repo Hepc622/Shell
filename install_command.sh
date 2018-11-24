@@ -37,7 +37,28 @@ if [[ "${#}" -gt 0 ]]; then
         index=${index}+1
     done
 else
-    scripts=("rjar" "rpmremove")
+    wget "https://raw.githubusercontent.com/Hepc622/Shell/master/config/config.cf"
+    if [[ -f 'config.cf' ]]; then
+        # read config file
+        for line in $(cat config.cf)
+        do
+            # Is contains environment
+            if [[ ${line}=~'command=' ]]; then
+                OLD_IFS=${IFS}
+                # deal 
+                IFS='=' 
+                arr=(${line})
+                IFS=","
+                scripts=(${arr[1]})
+                IFS=${OLD_IFS}
+            fi
+        done
+    else
+        echo "get config file faild"
+        exit 0
+    fi
+    # clear config.cf file
+    rm -f config.cf
 fi
 
 echo "install custom command ${scripts[@]}"

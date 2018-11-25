@@ -31,18 +31,16 @@ function install(){
         URL=${URL##\"}
         URL=${URL%%\"}
         # Try to take the script
-        wget ${URL} -P /usr/local/src/
+        wget ${URL} -P /usr/local/src/ 
         # 截取出安装包名字
         FILENAME=${URL##*/}
         # 解压文件
-        tar -zxvf /usr/local/src/${FILENAME}
+        tar -zxvf /usr/local/src/${FILENAME} -C /usr/local/src/
         # 切入到文件家里进行安装
         # get path 
         jname=$(ll | grep 'jdk'| grep 'drwxr' | awk '{print $9}')
         cd /usr/local/src/${jname}
         jpath=$(pwd)
-
-        vi /etc/profile
 
         echo "export JAVA_HOME=${jpath}
         export JAVA_BIN=${jpath}/bin

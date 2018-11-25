@@ -45,7 +45,7 @@ function install(){
         # 截取出安装包名字
         FILENAME=${URL##*/}
         # 解压文件
-        tar -zxvf /usr/local/src/${FILENAME}
+        tar -zxvf /usr/local/src/${FILENAME} -C /usr/local/src/
         # 切入到文件家里进行安装
         FOLDER=${FILENAME%%\.*}
         # cd 到解压目录里进行安装

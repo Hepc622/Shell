@@ -73,7 +73,7 @@ function install(){
 }
 # start service
 function start(){
-  ${EXECUTE_SERVER} /usr/local/redis/redis.conf
+  ${EXECUTE_SERVER} /usr/local/redis/redis.conf >/dev/null  2>&1 &
 
   status
 }

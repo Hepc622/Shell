@@ -60,7 +60,9 @@ function install(){
         ./bin/mysql_ssl_rsa_setup              
         ./bin/mysqld_safe --user=mysql &
         cp ./support-files/mysql.server /etc/init.d/mysql
-
+        mkdir /var/log/mariadb
+        touch /var/log/mariadb/mariadb.log
+        chown -R mysql:mysql  /var/log/mariadb/
         # 设置开启启动
         chkconfig /etc/init.d/mysql on
     done

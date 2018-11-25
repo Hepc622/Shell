@@ -8,6 +8,7 @@ function install(){
     
     # 将当前文件cp一份到/etc/init.d/下
     cp $(pwd)/${0} /etc/init.d 
+    echo $(pwd)/${0} /etc/init.d 
     # 添加可执行权限
     chmod +x /etc/init.d/${0}
     # 设置开机启动

@@ -1,0 +1,143 @@
+#!/bin/bash
+EXECUTE_SERVER=/usr/local/redis/bin/redis-server
+EXECUTE_CLI=/usr/local/redis/bin/redis-cli
+# install
+function install(){
+    # 安装依赖
+    yum -y install gcc pcre-devel zlib-devel openssl openssl-devel
+    
+    # 将当前文件cp一份到/etc/init.d/下
+    cp $(pwd)/${0} /etc/init.d 
+    # 添加可执行权限
+    chmod +x /etc/init.d/${0}
+    # 设置开机启动
+    chkconfig /etc/init.d/${0} on 
+    # 设置服务运行级别
+    chkconfig --add /etc/init.d/${0}
+    # 然后用 chkconfig --list 查看，在服务列表里就会出现自定义的服务了
+    # chkconfig --list
+
+    # 安装nginx
+    wget "https://raw.githubusercontent.com/Hepc622/Shell/master/config/config.cf"
+    if [[ -f 'config.cf' ]]; then
+        # read config file
+        for LINE in $(cat config.cf)
+        do
+            # Is contains redis
+            if [[ ${LINE}=~'redis=' ]]; then
+                OLD_IFS=${IFS}
+                # deal 
+                IFS='=' 
+                ARR=(${LINE})
+                IFS=","
+                URLS=(${ARR[1]})
+                IFS=${OLD_IFS}
+            fi
+        done
+    else
+        echo "get config file faild"
+        exit 0
+    fi
+    # clear config.cf file
+    rm -f config.cf
+    
+    # Execcut every one script
+    for URL in ${URLS[@]}; do
+        URL=${URL##\"}
+        URL=${URL%%\"}
+        # Try to take the script
+        wget ${URL} -P /usr/local/src
+        # 截取出安装包名字
+        FILENAME=${URL##*/}
+        # 解压文件
+        tar -zxvf /usr/local/src/${FILENAME}
+        # 切入到文件家里进行安装
+        FOLDER=${FILENAME%%\.*}
+        # cd 到解压目录里进行安装
+        cd /usr/local/src/${FOLDER}/src/
+        make && make install PREFIX=/usr/local/${0} 
+        # 将配置文件复制到redis安装目录下
+        cp /usr/local/src/${FOLDER}/redis.conf /usr/local/redis/
+    done
+    # 插入一条防火墙
+    iptables -I INPUT -p udp -m state --state NEW -m udp --dport 6379 -j ACCEPT
+    iptables -I INPUT -p tcp -m state --state NEW -m tcp --dport 6379 -j ACCEPT
+    iptables -I OUTPUT -p udp -m state --state NEW -m udp --dport 6379 -j ACCEPT
+    iptables -I OUTPUT -p tcp -m state --state NEW -m tcp --dport 6379 -j ACCEPT
+
+    service iptables save
+}
+# start service
+function start(){
+  ${EXECUTE_SERVER} /usr/local/redis/redis.conf
+
+  status
+}
+
+# stop service
+function stop(){
+  PID=$(ps -ef|grep /usr/local/redis/bin/redis-server|grep -v grep | awk '{print $2}')
+  if [[ -z ${PID} ]]; then
+      kill -9 ${PID}
+      echo "stop success"
+  else
+      echo "redis was top"
+  fi
+}
+
+# service status
+function status(){
+  PID=$(ps -ef|grep /usr/local/redis/bin/redis-server|grep -v grep | awk '{print $2}')
+  if [[ -z ${PID} ]]; then
+      echo "redis is running,the pid is ${PID}"
+  else
+      echo "redis is top"
+  fi
+
+}
+
+# restart service
+function restart(){
+  stop
+  start
+}
+
+function connect(){
+  ${EXECUTE_CLI}
+}
+# help 
+function help(){
+  echo "使用方法: redis [start|stop|status|restart|connect|help]"
+  echo "start:启动redis程序"
+  echo "stop:暂停redis程序"
+  echo "status:查看程序运行状态"
+  echo "restart:重启程序"
+  echo "connect:链接redis"
+  echo "help:打印帮助信息"
+}
+case $OPTIONS in
+  'start')
+    start
+    ;;
+  'stop')
+    stop
+    ;;
+  'status')
+    status
+    ;;
+  'restart')
+    restart
+    ;;
+  'help')
+    help
+    ;;
+  'connect')
+    connect
+    ;;
+  'install')
+    install
+    ;;
+  *)
+
+esac
+exit 0

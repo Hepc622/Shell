@@ -3,11 +3,7 @@
 # set environment
 export PATH=/usr/local/sbin:/usr/local/bin:/sbin:/bin:/usr/sbin:/usr/bin
 # install base development environment
-# install iptables
-# install java
-# install redis
 # install tomcat
-# install mysql
 # install vsftpd
 # install mycat
 # install zookeeper
@@ -49,6 +45,8 @@ fi
 
 # Execcut every one script
 for script in ${scripts[@]}; do
+    script=${script##\"}
+    script=${script%%\"}
     # Try to take the script
     wget "https://raw.githubusercontent.com/Hepc622/Shell/master/development/${script}"
     # Check the script exist
@@ -58,7 +56,7 @@ for script in ${scripts[@]}; do
         # print the execut script
         echo "start install ${script}"
         # Try to execut the script
-        ./${script}
+        ./${script} install
         # Clear the executed script
         rm -rf ${script}
     else

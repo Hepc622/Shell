@@ -1,0 +1,77 @@
+#!/bin/bash
+# install
+function install(){
+    # 安装mysql
+    wget "https://raw.githubusercontent.com/Hepc622/Shell/master/config/config.cf"
+    if [[ -f 'config.cf' ]]; then
+        # read config file
+        for LINE in $(cat config.cf)
+        do
+            # Is contains mysql
+            if [[ ${LINE}=~'mysql=' ]]; then
+                OLD_IFS=${IFS}
+                # deal 
+                IFS='=' 
+                ARR=(${LINE})
+                IFS=","
+                URLS=(${ARR[1]})
+                IFS=${OLD_IFS}
+            fi
+        done
+    else
+        echo "get config file faild"
+        exit 0
+    fi
+    # clear config.cf file
+    rm -f config.cf
+    
+    # Execcut every one script
+    for URL in ${URLS[@]}; do
+        URL=${URL##\"}
+        URL=${URL%%\"}
+        # Try to take the script
+        wget ${URL} -P /usr/local/src
+        # 截取出安装包名字
+        FILENAME=${URL##*/}
+        # 解压文件
+        tar -zxvf /usr/local/src/${FILENAME}
+        # 切入到文件家里进行安装
+        FOLDER=${FILENAME%%\.*}
+        # cd 到解压目录里进行安装
+        cd /usr/local/src/${FOLDER}
+        # 建立软连接
+        ln -s /usr/local/src/${FOLDER}/* /usr/local/mysql/
+        # cd 到mysql目录
+        cd /usr/local/mysql/
+        # 创建mysql 组
+        groupadd mysql
+        # 穿件mysql用户
+        useradd -r -g mysql -s /bin/false mysql
+        mkdir mysql-files
+        chown mysql:mysql mysql-files
+        chmod 750 mysql-files
+  
+        ./bin/mysqld --initialize --user=mysql 
+        ./bin/mysql_ssl_rsa_setup              
+        ./bin/mysqld_safe --user=mysql &
+        cp ./support-files/mysql.server /etc/init.d/mysql
+
+        # 设置开启启动
+        chkconfig /etc/init.d/mysql on
+    done
+    # 插入一条防火墙
+    iptables -I INPUT -p udp -m state --state NEW -m udp --dport 3306 -j ACCEPT
+    iptables -I INPUT -p tcp -m state --state NEW -m tcp --dport 3306 -j ACCEPT
+    iptables -I OUTPUT -p udp -m state --state NEW -m udp --dport 3306 -j ACCEPT
+    iptables -I OUTPUT -p tcp -m state --state NEW -m tcp --dport 3306 -j ACCEPT
+
+    service iptables save
+}
+case $OPTIONS in
+  'install')
+    install
+    ;;
+  *)
+
+esac
+exit 0

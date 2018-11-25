@@ -1,0 +1,63 @@
+#!/bin/bash
+
+function install(){
+    # dnowload jdk
+    # 安装jdk
+    wget "https://raw.githubusercontent.com/Hepc622/Shell/master/config/config.cf"
+    if [[ -f 'config.cf' ]]; then
+        # read config file
+        for LINE in $(cat config.cf)
+        do
+            # Is contains redis
+            if [[ ${LINE}=~'redis=' ]]; then
+                OLD_IFS=${IFS}
+                # deal 
+                IFS='=' 
+                ARR=(${LINE})
+                IFS=","
+                URLS=(${ARR[1]})
+                IFS=${OLD_IFS}
+            fi
+        done
+    else
+        echo "get config file faild"
+        exit 0
+    fi
+    # clear config.cf file
+    rm -f config.cf
+    
+    # Execcut every one script
+    for URL in ${URLS[@]}; do
+        URL=${URL##\"}
+        URL=${URL%%\"}
+        # Try to take the script
+        wget ${URL} -P /usr/local/src/
+        # 截取出安装包名字
+        FILENAME=${URL##*/}
+        # 解压文件
+        tar -zxvf /usr/local/src/${FILENAME}
+        # 切入到文件家里进行安装
+        # get path 
+        jname=$(ll | grep 'jdk'| grep 'drwxr' | awk '{print $9}')
+        cd /usr/local/src/${jname}
+        jpath=$(pwd)
+
+        vi /etc/profile
+
+        echo "export JAVA_HOME=${jpath}
+        export JAVA_BIN=${jpath}/bin
+        export PATH=$PATH:$JAVA_HOME/bin
+        export CLASSPATH=:$JAVA_HOME/lib/dt.jar:$JAVA_HOME/lib/tools.jar
+        export JAVA_HOME JAVA_BIN PATH CLASSPATHSPH" >>/etc/profile
+    done
+    source /etc/profile
+}
+
+case $OPTIONS in
+  'install')
+    install
+    ;;
+  *)
+
+esac
+exit 0

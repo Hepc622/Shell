@@ -3,7 +3,7 @@ PACKAGED_NAME="$1"
 OPTIONS="$2"
 
 function help(){
-  echo "使用方法: runjar xxx.jar [start|stop|status|restart|help]"
+  echo "使用方法: rjar xxx.jar [start|stop|status|restart|help]"
   echo "start:启动程序,需要指定完整的文件路径"
   echo "stop:关闭程序,需要提供程序名字"
   echo "status:查看程序运行状态,需要提供程序名字"

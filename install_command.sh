@@ -65,6 +65,8 @@ echo "install custom command ${scripts[@]}"
 
 # 循环获取脚本生成命令
 for item in ${scripts[@]}; do
+    item=${item##\"}
+    item=${item%%\"}
     flag=0
     # 判断文件是否存在，如果存在就备份一下
     if [[ -f "${script_path}/${item}" ]]; then

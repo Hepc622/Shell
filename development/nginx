@@ -1,0 +1,181 @@
+#!/bin/bash
+#!/bin/bash  
+# description: application description  
+# processname: application name
+# chkconfig: 234 20 80 
+
+
+OPTIONS=${1}
+EXECUTE=/usr/local/nginx/sbin/nginx
+# install
+function install(){
+    # 安装依赖
+    yum -y install gcc pcre-devel zlib-devel openssl openssl-devel
+    
+    # 安装nginx
+    wget "https://raw.githubusercontent.com/Hepc622/Shell/master/config/config.cf"
+    if [[ -f 'config.cf' ]]; then
+        # read config file
+        for LINE in $(cat config.cf)
+        do
+            # Is contains nginx
+            if [[ ${LINE}=~'nginx=' ]]; then
+                OLD_IFS=${IFS}
+                # deal 
+                IFS='=' 
+                ARR=(${LINE})
+                IFS=","
+                URLS=(${ARR[1]})
+                IFS=${OLD_IFS}
+            fi
+        done
+    else
+        echo "get config file faild"
+        exit 0
+    fi
+    # clear config.cf file
+    rm -f config.cf
+
+    # Execcut every one script
+    for URL in ${URLS[@]}; do
+        URL=${URL##\"}
+        URL=${URL%%\"}
+        # Try to take the script
+        wget ${URL} -P /usr/local/src
+        # 截取出安装包名字
+        FILENAME=${URL##*/}
+        # 解压文件
+        tar -zxvf /usr/local/src/${FILENAME}
+        # 切入到文件家里进行安装
+        FOLDER=${FILENAME%%\.*}
+        # cd 到解压目录里进行安装
+        ./usr/local/src/${FOLDER}/configure --prefix=/usr/local/${0} && make && make install
+    done
+    
+    # 将当前文件cp一份到/etc/init.d/下
+    cp $(pwd)/${0} /etc/init.d 
+    # 添加可执行权限
+    chmod +x /etc/init.d/${0}
+    # 设置开机启动
+    chkconfig /etc/init.d/${0} on 
+    # 设置服务运行级别
+    chkconfig --add /etc/init.d/${0}
+    # 然后用 chkconfig --list 查看，在服务列表里就会出现自定义的服务了
+    # chkconfig --list
+    iptables -I INPUT -p udp -m state --state NEW -m udp --dport 80 -j ACCEPT
+    iptables -I INPUT -p tcp -m state --state NEW -m tcp --dport 80 -j ACCEPT
+    iptables -I OUTPUT -p udp -m state --state NEW -m udp --dport 80 -j ACCEPT
+    iptables -I OUTPUT -p tcp -m state --state NEW -m tcp --dport 80 -j ACCEPT
+
+    iptables -I INPUT -p udp -m state --state NEW -m udp --dport 443 -j ACCEPT
+    iptables -I INPUT -p tcp -m state --state NEW -m tcp --dport 443 -j ACCEPT
+    iptables -I OUTPUT -p udp -m state --state NEW -m udp --dport 443 -j ACCEPT
+    iptables -I OUTPUT -p tcp -m state --state NEW -m tcp --dport 443 -j ACCEPT
+
+    service iptables save
+}
+
+# start service
+function start(){
+    ${EXECUTE}
+    
+    echo "nginx startting"
+}
+
+#测试配置文件是否正确
+function check(){
+    ${EXECUTE} -t
+}
+
+# 查看版本号
+function version(){
+    ${EXECUTE} -v
+}
+
+# 退出
+function quit(){
+    ${EXECUTE} -s quit
+
+    status
+}
+
+# stop service
+function stop(){
+    ${EXECUTE} -s stop
+    # invoke status
+    status
+}
+
+# service status
+function status(){
+    PID=$(ps -ef|grep /usr/local/nginx/sbin/nginx|grep -v grep | awk '{print $2}')
+    if [[ -z ${PID} ]]; then
+        echo "nginx is running,the pid is ${PID}"
+    else
+        echo "nginx is top"
+    fi
+
+}
+
+# 重新加载配置文件，如果有错误则使用跟之前的配置
+function reload(){
+    ${EXECUTE} -s reload
+    
+    status
+}
+
+# restart service
+function restart(){
+    # restart service
+    ${EXECUTE} -s reopen
+
+    status
+}
+
+# help 
+function help(){
+  echo "使用方法: nginx [start|stop|quit|status|restart|check|reload|version|help]"
+  echo "start:启动nginx程序"
+  echo "stop:暂停nginx程序"
+  echo "quit:退出nginx程序"
+  echo "status:查看程序运行状态"
+  echo "restart:重启程序"
+  echo "check:检查配置文件"
+  echo "reload:重新加载配置文件并启动"
+  echo "help:打印帮助信息"
+}
+case $OPTIONS in
+  'start')
+    start
+    ;;
+  'stop')
+    stop
+    ;;
+  'quit')
+    quit
+    ;;
+  'status')
+    status
+    ;;
+  'restart')
+    restart
+    ;;
+  'check')
+    check
+    ;;
+  'reload')
+    reload
+    ;;
+  'version')
+    version
+    ;;
+  'help')
+    help
+    ;;
+  'install')
+    install
+    ;;
+  *)
+
+esac
+exit 0

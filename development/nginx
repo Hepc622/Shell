@@ -5,7 +5,7 @@
 # chkconfig: 234 20 80 
 
 
-OPTIONS=${1}
+OPTIONS=$1
 EXECUTE=/usr/local/nginx/sbin/nginx
 # install
 function install(){

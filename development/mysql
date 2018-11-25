@@ -67,7 +67,7 @@ function install(){
 
     service iptables save
 }
-case $OPTIONS in
+case $1 in
   'install')
     install
     ;;

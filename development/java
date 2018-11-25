@@ -53,7 +53,7 @@ function install(){
     source /etc/profile
 }
 
-case $OPTIONS in
+case $1 in
   'install')
     install
     ;;

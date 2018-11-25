@@ -29,16 +29,21 @@ function install(){
     for URL in ${URLS[@]}; do
         URL=${URL##\"}
         URL=${URL%%\"}
-        # Try to take the script
-        wget ${URL} -P /usr/local/src
         # 截取出安装包名字
         FILENAME=${URL##*/}
+        if [[ ! -f /usr/local/src/$FILENAME ]]; then
+          # Try to take the script
+          wget ${URL} -P /usr/local/src
+        fi
         # 解压文件
         tar -zxvf /usr/local/src/${FILENAME} -C /usr/local/src/
         # 切入到文件家里进行安装
-        FOLDER=${FILENAME%%\.*}
+        FOLDER=${FILENAME%\.*}
+        FOLDER=${FOLDER%\.*}
         # cd 到解压目录里进行安装
         cd /usr/local/src/${FOLDER}
+        # 创建目录
+        mkdir /usr/local/mysql
         # 建立软连接
         ln -s /usr/local/src/${FOLDER}/* /usr/local/mysql/
         # cd 到mysql目录

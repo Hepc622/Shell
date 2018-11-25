@@ -60,6 +60,9 @@ for script in ${scripts[@]}; do
         ./${script} install
         # Clear the executed script
         rm -rf ${script}
+        echo "end install ${script}"
+        echo ""
+        echo ""
     else
         echo "The ${script} not exsit"        
     fi

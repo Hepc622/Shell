@@ -25,7 +25,7 @@ else
         for line in $(cat config.cf)
         do
             # Is contains environment
-            if [[ ${line}=~'environment=' ]]; then
+            if [[ -n $(echo ${line}|grep '^environment=') ]]; then
                 OLD_IFS=${IFS}
                 # deal 
                 IFS='=' 

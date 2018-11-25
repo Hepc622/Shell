@@ -8,7 +8,7 @@ function install(){
         for LINE in $(cat config.cf)
         do
             # Is contains mysql
-            if [[ ${LINE}=~'mysql=' ]]; then
+            if [[ -n $(echo ${LINE}|grep '^mysql=' ]]; then
                 OLD_IFS=${IFS}
                 # deal 
                 IFS='=' 

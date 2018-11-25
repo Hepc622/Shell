@@ -9,7 +9,7 @@ function install(){
         for LINE in $(cat config.cf)
         do
             # Is contains redis
-            if [[ ${LINE}=~'redis=' ]]; then
+            if [[ -n $(echo ${LINE}|grep '^java=' ]]; then
                 OLD_IFS=${IFS}
                 # deal 
                 IFS='=' 

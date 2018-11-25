@@ -19,7 +19,7 @@ function install(){
         for LINE in $(cat config.cf)
         do
             # Is contains nginx
-            if [[ ${LINE}=~'nginx=' ]]; then
+            if [[ -n $(echo ${LINE}|grep '^nginx=') ]]; then
                 OLD_IFS=${IFS}
                 # deal 
                 IFS='=' 

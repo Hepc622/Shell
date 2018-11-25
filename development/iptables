@@ -4,7 +4,7 @@ systemctl stop firewalld.service
 # 关闭自启
 systemctl disable firewalld.service 
 # 安装iptables
-yum install iptables-services
+yum -y install iptables-services
 
 # 修改配置文件
 echo "

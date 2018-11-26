@@ -31,7 +31,7 @@ function start(){
 }
 # 状态
 function status(){
-  PID=$(ps -ef|grep '${EXECUTE}'|grep -v grep | awk '{print $2}')
+  PID=$(ps -ef|grep 'vsftpd'|grep -v grep | awk '{print $2}')
   if [[ -n ${PID} ]]; then
       echo "vsftpd is running,the pid is ${PID}"
   else
@@ -40,7 +40,7 @@ function status(){
 }
 # 停止
 function stop(){
-  PID=$(ps -ef|grep '${EXECUTE}'|grep -v grep | awk '{print $2}')
+  PID=$(ps -ef|grep 'vsftpd'|grep -v grep | awk '{print $2}')
   if [[ -n ${PID} ]]; then
       kill -9 ${PID}
   fi

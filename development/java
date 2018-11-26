@@ -42,9 +42,12 @@ function install(){
         tar -zxvf /usr/local/src/${FILENAME} -C /usr/local/src/
         # 切入到文件家里进行安装
         # get path 
+        cd /usr/local/src/
+        
         jname=$(ll | grep 'jdk'| grep 'drwxr' | awk '{print $9}')
-        cd /usr/local/src/${jname}
-        jpath=$(pwd)
+        jpath=/usr/local/src/${jname}
+        
+        cd ${jpath}
 
         echo "export JAVA_HOME=${jpath}
         export JAVA_BIN=${jpath}/bin

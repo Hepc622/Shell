@@ -47,13 +47,14 @@ function install(){
         jname=$(ll | grep 'jdk'| grep 'drwxr' | awk '{print $9}')
         jpath=/usr/local/src/${jname}
         
-        cd ${jpath}
-
-        echo "export JAVA_HOME=${jpath}
-        export JAVA_BIN=${jpath}/bin
-        export PATH=$PATH:$JAVA_HOME/bin
-        export CLASSPATH=:$JAVA_HOME/lib/dt.jar:$JAVA_HOME/lib/tools.jar
-        export JAVA_HOME JAVA_BIN PATH CLASSPATHSPH" >>/etc/profile
+        if [[ -n $(cat /etc/profile | grep 'export JAVA_HOME=${jpath}')]] {
+            echo "export JAVA_HOME=${jpath}" >>/etc/profile
+            echo "export JAVA_BIN=${jpath}/bin" >>/etc/profile
+            echo "export PATH=$PATH:$JAVA_HOME/bin" >>/etc/profile
+            echo "export CLASSPATH=:$JAVA_HOME/lib/dt.jar:$JAVA_HOME/lib/tools.jar" >>/etc/profile
+            echo "export JAVA_HOME JAVA_BIN PATH CLASSPATHSPH" >>/etc/profile    
+        }
+        
     done
     source /etc/profile
 }

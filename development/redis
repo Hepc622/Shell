@@ -81,7 +81,7 @@ function start(){
 # stop service
 function stop(){
   PID=$(ps -ef|grep /usr/local/redis/bin/redis-server|grep -v grep | awk '{print $2}')
-  if [[ -z ${PID} ]]; then
+  if [[ -n ${PID} ]]; then
       kill -9 ${PID}
       echo "stop success"
   else
@@ -92,7 +92,7 @@ function stop(){
 # service status
 function status(){
   PID=$(ps -ef|grep /usr/local/redis/bin/redis-server|grep -v grep | awk '{print $2}')
-  if [[ -z ${PID} ]]; then
+  if [[ -n ${PID} ]]; then
       echo "redis is running,the pid is ${PID}"
   else
       echo "redis is top"

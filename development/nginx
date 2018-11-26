@@ -112,7 +112,7 @@ function stop(){
 # service status
 function status(){
     PID=$(ps -ef|grep /usr/local/nginx/sbin/nginx|grep -v grep | awk '{print $2}')
-    if [[ -z ${PID} ]]; then
+    if [[ -n ${PID} ]]; then
         echo "nginx is running,the pid is ${PID}"
     else
         echo "nginx is top"

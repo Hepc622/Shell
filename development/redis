@@ -1,4 +1,8 @@
-#!/bin/bash
+#!/bin/bash  
+# description: application description  
+# processname: application name
+# chkconfig: 234 20 80 
+
 EXECUTE_SERVER=/usr/local/redis/bin/redis-server
 EXECUTE_CLI=/usr/local/redis/bin/redis-cli
 # install

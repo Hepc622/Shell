@@ -10,6 +10,7 @@ export PATH=/usr/local/sbin:/usr/local/bin:/sbin:/bin:/usr/sbin:/usr/bin
 # install rabbit
 
 scripts=""
+work=$(pwd)
 # Deal the parameter
 # If the parameter length is 0,execut the all script 
 if [[ "${#}" -gt 0 ]]; then
@@ -47,7 +48,8 @@ fi
 for script in ${scripts[@]}; do
     script=${script##\"}
     script=${script%%\"}
-
+    # 切回到之前的工作目录
+    cd ${work}
     # Try to take the script
     wget "https://raw.githubusercontent.com/Hepc622/Shell/master/development/${script}"
     # Check the script exist

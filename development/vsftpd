@@ -1,2 +1,84 @@
 #!/bin/bash
-yum install -y vsftpd
+# description: application description  
+# processname: application name
+# chkconfig: 234 20 80 
+EXECUTE=/usr/sbin/vsftpd
+function install(){
+    # 安装vsftpd服务器
+    yum install -y vsftpd
+
+    # 添加防火墙端口配置
+    iptables -I INPUT -p udp -m state --state NEW -m udp --dport 20 -j ACCEPT
+    iptables -I INPUT -p tcp -m state --state NEW -m tcp --dport 20 -j ACCEPT
+    iptables -I OUTPUT -p udp -m state --state NEW -m udp --dport 20 -j ACCEPT
+    iptables -I OUTPUT -p tcp -m state --state NEW -m tcp --dport 20 -j ACCEPT
+
+    service iptables save
+
+    # 将当前文件cp一份到/etc/init.d/下
+    cp $(pwd)/${0} /etc/init.d 
+    # 添加可执行权限
+    chmod +x /etc/init.d/${0}
+    # 设置开机启动
+    chkconfig /etc/init.d/${0} on 
+    # 设置服务运行级别
+    chkconfig --add /etc/init.d/${0}
+}
+# 启动
+function start(){
+    ${EXECUTE}
+    status
+}
+# 状态
+function status(){
+  PID=$(ps -ef|grep '${EXECUTE}'|grep -v grep | awk '{print $2}')
+  if [[ -n ${PID} ]]; then
+      echo "vsftpd is running,the pid is ${PID}"
+  else
+      echo "vsftpd is top"
+  fi
+}
+# 停止
+function stop(){
+  PID=$(ps -ef|grep '${EXECUTE}'|grep -v grep | awk '{print $2}')
+  if [[ -n ${PID} ]]; then
+      kill -9 ${PID}
+  fi
+  status
+}
+# 重启
+function restart(){
+    start
+    stop
+}
+# 帮助
+function help(){
+    echo "使用方法: service vsftpd [start|stop|status|restart|help]"
+    echo "start:启动程序 vsftpd"
+    echo "stop:关闭程序 vsftpd"
+    echo "status:查看程序运行状态 vsftpd"
+    echo "restart:重启程序 vsftpd"
+    echo "help:打印帮助信息"
+}
+case $1 in
+    'start')
+        start
+        ;;
+    'stop')
+        stop
+        ;;
+    'status')
+        status
+        ;;
+    'restart')
+        restart
+        ;;
+    'help')
+        help
+        ;;
+    'install')
+        install
+        ;;
+    *)
+esac
+exit 0

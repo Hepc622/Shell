@@ -1,5 +1,5 @@
 #!/bin/bash
-
+export PATH=/usr/local/sbin:/usr/local/bin:/sbin:/bin:/usr/sbin:/usr/bin
 function install(){
     # dnowload jdk
     # 安装jdk
@@ -31,7 +31,6 @@ function install(){
         URL=${URL##\"}
         URL=${URL%%\"}
         # Try to take the script
-        wget ${URL} -P /usr/local/src/ 
         # 截取出安装包名字
         FILENAME=${URL##*/}
         if [[ ! -f /usr/local/src/$FILENAME ]]; then
@@ -44,10 +43,10 @@ function install(){
         # get path 
         cd /usr/local/src/
         
-        jname=$(ll | grep 'jdk'| grep 'drwxr' | awk '{print $9}')
+        jname=$(ls -l | grep 'jdk'| grep 'drwxr' | awk '{print $9}')
         jpath=/usr/local/src/${jname}
         
-        if [[ -n $(cat /etc/profile | grep 'export JAVA_HOME=${jpath}') ]]; then 
+        if [[ -z $(cat /etc/profile | grep 'export JAVA_HOME=${jpath}') ]]; then 
             echo "export JAVA_HOME=${jpath}" >>/etc/profile
             echo "export JAVA_BIN=${jpath}/bin" >>/etc/profile
             echo "export PATH=$PATH:$JAVA_HOME/bin" >>/etc/profile

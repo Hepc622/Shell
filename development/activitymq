@@ -17,7 +17,7 @@ function install(){
         for LINE in $(cat config.cf)
         do
             # Is contains fastdfs
-            if [[ -n $(echo ${LINE}|grep '^zookeeper=') ]]; then
+            if [[ -n $(echo ${LINE}|grep '^activitymq=') ]]; then
                 OLD_IFS=${IFS}
                 # deal 
                 IFS='=' 
@@ -46,30 +46,36 @@ function install(){
         fi
         # 解压文件
         tar -zxvf /usr/local/src/${FILENAME} -C /usr/local/src/
-        # 获取文件夹名字
-        zname=$(ls -l | grep 'zookeeper'| grep 'drwxr' | awk '{print $9}')
-        zpath=/usr/local/src/${zname}
-        # 切入到文件夹
-        cd ${zpath}
-        # copy 一份zoo.cfg
-        cd conf
-        cp zoo-sample.cfg ./zoo.cfg
-        # cd 到bin
-        cd ${zpath}
-        cd bin
-        APPLICATION=${zpath}/bin/zkServer.sh
-    done
-    if [[ -z iptables -L -n|grep 2181 ]]; then
-        #statements
-        iptables -I OUTPUT -p udp -m state --state NEW -m udp --dport 2181 -j ACCEPT
-        iptables -I OUTPUT -p tcp -m state --state NEW -m tcp --dport 2181 -j ACCEPT
 
-        iptables -I OUTPUT -p udp -m state --state NEW -m udp --dport 2181 -j ACCEPT
-        iptables -I OUTPUT -p tcp -m state --state NEW -m tcp --dport 2181 -j ACCEPT
+        # 获取文件夹名字
+        app_name=$(ls -l | grep 'activemq'| grep 'drwxr' | awk '{print $9}')
+        app_path=/usr/local/src/${app_name}
+        # 切入到文件夹
+        cd ${app_path}
+        # cd 到bin
+        cd bin
+        APPLICATION=${app_path}/bin/activemq
+    done
+    if [[ -z iptables -L -n|grep 61616 ]]; then
+        #statements
+        iptables -I OUTPUT -p udp -m state --state NEW -m udp --dport 61616 -j ACCEPT
+        iptables -I OUTPUT -p tcp -m state --state NEW -m tcp --dport 61616 -j ACCEPT
+
+        iptables -I OUTPUT -p udp -m state --state NEW -m udp --dport 61616 -j ACCEPT
+        iptables -I OUTPUT -p tcp -m state --state NEW -m tcp --dport 61616 -j ACCEPT
 
         service iptables save
     fi
+    if [[ -z iptables -L -n|grep 8161 ]]; then
+        #statements
+        iptables -I OUTPUT -p udp -m state --state NEW -m udp --dport 8161 -j ACCEPT
+        iptables -I OUTPUT -p tcp -m state --state NEW -m tcp --dport 8161 -j ACCEPT
 
+        iptables -I OUTPUT -p udp -m state --state NEW -m udp --dport 8161 -j ACCEPT
+        iptables -I OUTPUT -p tcp -m state --state NEW -m tcp --dport 8161 -j ACCEPT
+
+        service iptables save
+    fi
 }
 function start(){
     ${APPLICATION} start
@@ -85,8 +91,8 @@ function restart(){
 }
 function help(){
   echo "使用方法: redis [start|stop|status|restart|help]"
-  echo "start:启动zookeeper程序"
-  echo "stop:暂停zookeeper程序"
+  echo "start:启动activitymq程序"
+  echo "stop:暂停activitymq程序"
   echo "status:查看程序运行状态"
   echo "restart:重启程序"
   echo "help:打印帮助信息"

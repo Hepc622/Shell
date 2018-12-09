@@ -66,13 +66,15 @@ function install(){
         # 设置开启启动
         chkconfig /etc/init.d/mysql on
     done
-    # 插入一条防火墙
-    iptables -I INPUT -p udp -m state --state NEW -m udp --dport 3306 -j ACCEPT
-    iptables -I INPUT -p tcp -m state --state NEW -m tcp --dport 3306 -j ACCEPT
-    iptables -I OUTPUT -p udp -m state --state NEW -m udp --dport 3306 -j ACCEPT
-    iptables -I OUTPUT -p tcp -m state --state NEW -m tcp --dport 3306 -j ACCEPT
+    if [[ -z iptables -L -n|grep 3306 ]]; then
+        # 插入一条防火墙
+        iptables -I INPUT -p udp -m state --state NEW -m udp --dport 3306 -j ACCEPT
+        iptables -I INPUT -p tcp -m state --state NEW -m tcp --dport 3306 -j ACCEPT
+        iptables -I OUTPUT -p udp -m state --state NEW -m udp --dport 3306 -j ACCEPT
+        iptables -I OUTPUT -p tcp -m state --state NEW -m tcp --dport 3306 -j ACCEPT
 
-    service iptables save
+        service iptables save
+    fi
 }
 case $1 in
   'install')

@@ -7,11 +7,13 @@ function install(){
     # 安装vsftpd服务器
     yum install -y vsftpd
 
-    # 添加防火墙端口配置
-    iptables -I INPUT -p udp -m state --state NEW -m udp --dport 20 -j ACCEPT
-    iptables -I INPUT -p tcp -m state --state NEW -m tcp --dport 20 -j ACCEPT
-    iptables -I OUTPUT -p udp -m state --state NEW -m udp --dport 20 -j ACCEPT
-    iptables -I OUTPUT -p tcp -m state --state NEW -m tcp --dport 20 -j ACCEPT
+    if [[ -z iptables -L -n|grep 20 ]]; then
+        # 添加防火墙端口配置
+        iptables -I INPUT -p udp -m state --state NEW -m udp --dport 20 -j ACCEPT
+        iptables -I INPUT -p tcp -m state --state NEW -m tcp --dport 20 -j ACCEPT
+        iptables -I OUTPUT -p udp -m state --state NEW -m udp --dport 20 -j ACCEPT
+        iptables -I OUTPUT -p tcp -m state --state NEW -m tcp --dport 20 -j ACCEPT
+    fi
 
     service iptables save
 

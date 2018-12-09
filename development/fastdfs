@@ -1,0 +1,47 @@
+#!/bin/bash
+function install(){
+    # 安装mysql
+    wget "https://raw.githubusercontent.com/Hepc622/Shell/master/config/config.cf"
+    if [[ -f 'config.cf' ]]; then
+        # read config file
+        for LINE in $(cat config.cf)
+        do
+            # Is contains fastdfs
+            if [[ -n $(echo ${LINE}|grep '^fastdfs=') ]]; then
+                OLD_IFS=${IFS}
+                # deal 
+                IFS='=' 
+                ARR=(${LINE})
+                IFS=","
+                URLS=(${ARR[1]})
+                IFS=${OLD_IFS}
+            fi
+        done
+    else
+        echo "get config file faild"
+        exit 0
+    fi
+    # clear config.cf file
+    rm -f config.cf
+    
+    # Execcut every one script
+    for URL in ${URLS[@]}; do
+        URL=${URL##\"}
+        URL=${URL%%\"}
+        # 截取出安装包名字
+        FILENAME=${URL##*/}
+        if [[ ! -f /usr/local/src/$FILENAME ]]; then
+          # Try to take the script
+          wget ${URL} -P /usr/local/src
+        fi
+        # 解压文件
+        tar -zxvf /usr/local/src/${FILENAME} -C /usr/local/src/
+    done
+}
+case $1 in
+    'install')
+        install
+        ;;
+    *)
+esac
+exit 0

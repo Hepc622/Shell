@@ -64,22 +64,22 @@ function install(){
         cd /usr/local/src/${FOLDER}/
         ./configure --prefix=/usr/local/${0} && make && make install
     done
-    if [[ -z iptables -L -n|grep 80 ]]; then
-        # 然后用 chkconfig --list 查看，在服务列表里就会出现自定义的服务了
-        # chkconfig --list
-        iptables -I INPUT -p udp -m state --state NEW -m udp --dport 80 -j ACCEPT
-        iptables -I INPUT -p tcp -m state --state NEW -m tcp --dport 80 -j ACCEPT
-        iptables -I OUTPUT -p udp -m state --state NEW -m udp --dport 80 -j ACCEPT
-        iptables -I OUTPUT -p tcp -m state --state NEW -m tcp --dport 80 -j ACCEPT
-        service iptables save
-    fi
-    if [[ -z iptables -L -n|grep 443 ]]; then
-        iptables -I INPUT -p udp -m state --state NEW -m udp --dport 443 -j ACCEPT
-        iptables -I INPUT -p tcp -m state --state NEW -m tcp --dport 443 -j ACCEPT
-        iptables -I OUTPUT -p udp -m state --state NEW -m udp --dport 443 -j ACCEPT
-        iptables -I OUTPUT -p tcp -m state --state NEW -m tcp --dport 443 -j ACCEPT
-        service iptables save
-    fi
+#     if [[ -z iptables -L -n|grep 80 ]]; then
+#         # 然后用 chkconfig --list 查看，在服务列表里就会出现自定义的服务了
+#         # chkconfig --list
+#         iptables -I INPUT -p udp -m state --state NEW -m udp --dport 80 -j ACCEPT
+#         iptables -I INPUT -p tcp -m state --state NEW -m tcp --dport 80 -j ACCEPT
+#         iptables -I OUTPUT -p udp -m state --state NEW -m udp --dport 80 -j ACCEPT
+#         iptables -I OUTPUT -p tcp -m state --state NEW -m tcp --dport 80 -j ACCEPT
+#         service iptables save
+#     fi
+#     if [[ -z iptables -L -n|grep 443 ]]; then
+#         iptables -I INPUT -p udp -m state --state NEW -m udp --dport 443 -j ACCEPT
+#         iptables -I INPUT -p tcp -m state --state NEW -m tcp --dport 443 -j ACCEPT
+#         iptables -I OUTPUT -p udp -m state --state NEW -m udp --dport 443 -j ACCEPT
+#         iptables -I OUTPUT -p tcp -m state --state NEW -m tcp --dport 443 -j ACCEPT
+#         service iptables save
+#     fi
 }
 
 # start service
